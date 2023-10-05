@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    image: ruby:3.0.2
+    tty: true
+    volumes:
+      - .:/myapp
+    environment:
+      RAILS_ENV: development
