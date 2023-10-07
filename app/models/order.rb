@@ -17,8 +17,9 @@ class Order < ApplicationRecord
       end
 
       order.save!
-
-      PointLog.create!(user: order.user, points: order.points_to_add, trigger: order)
+      unless items.any?(:no_discount)
+        PointLog.create!(user: order.user, points: order.points_to_add, trigger: order)
+      end
     end
 
     order
@@ -27,11 +28,14 @@ class Order < ApplicationRecord
   end
 
   def cancel
+    point_log = user.point_logs.find_by(trigger: self)
+    point_log&.destroy
     update(status: :cancelled)
+    point_log.notify_revoked
   end
 
   def point_to_add
-    (total_price * 0.1).to_i
+    order_details.sum { |detail| detail.item.award_point * detail.amount }
   end
 
   def total_price
