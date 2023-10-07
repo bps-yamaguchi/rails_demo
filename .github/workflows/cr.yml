@@ -1,0 +1,33 @@
+name: Code Review
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      top_p:
+        description: 'top_p'
+        required: true
+      temperature:
+        description: 'temperature'
+        required: true
+
+jobs:
+  test:
+    # if: ${{ contains(github.event.*.labels.*.name, 'gpt review') }} # Optional; to run only when a label is attached
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anc95/ChatGPT-CodeReview@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Optional
+          LANGUAGE: Japanese
+          MODEL: gpt-4 # https://platform.openai.com/docs/models
+          # PROMPT: # example: Please check if there are any confusions or irregularities in the following code diff:
+          top_p: ${{ github.event.inputs.top_p }} # https://platform.openai.com/docs/api-reference/chat/create#chat/create-top_p
+          temperature: ${{ github.event.inputs.temperature }} # https://platform.openai.com/docs/api-reference/chat/create#chat/create-temperature
+          max_tokens: 10000
+          MAX_PATCH_LENGTH: 10000 # if the patch/diff length is large than MAX_PATCH_LENGTH, will be ignored and won't review. By default, with no MAX_PATCH_LENGTH set, there is also no limit for the patch/diff length.
