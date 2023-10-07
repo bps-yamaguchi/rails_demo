@@ -5,14 +5,8 @@ permissions:
   pull-requests: write
 
 on:
-  workflow_dispatch:
-    inputs:
-      top_p:
-        description: 'top_p'
-        required: true
-      temperature:
-        description: 'temperature'
-        required: true
+  pull_request:
+    types: [opened]
 
 jobs:
   test:
