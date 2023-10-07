@@ -31,7 +31,7 @@ class Order < ApplicationRecord
   end
 
   def point_to_add
-    order.total_price * 0.1
+    total_price * 0.1
   end
 
   def total_price
