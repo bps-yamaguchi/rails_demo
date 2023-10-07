@@ -29,4 +29,12 @@ class Order < ApplicationRecord
   def cancel
     update(status: :cancelled)
   end
+
+  def point_to_add
+    order.total_price * 0.1
+  end
+
+  def total_price
+    items.sum { |item| item.price }
+  end
 end
