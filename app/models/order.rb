@@ -12,8 +12,8 @@ class Order < ApplicationRecord
     order = new(user: cart.user, status: :pending)
 
     ActiveRecord::Base.transaction do
-      cart.items.each do |item|
-        order.order_details.build(item: item, amount: item.amount)
+      cart.cart_details.each do |cart_detail|
+        order.order_details.build(item: cart_detail.item, amount: cart_detail.amount)
       end
 
       order.save!
@@ -31,10 +31,10 @@ class Order < ApplicationRecord
   end
 
   def point_to_add
-    total_price * 0.1
+    (total_price * 0.1).to_i
   end
 
   def total_price
-    items.sum { |item| item.price }
+    order_details.sum { |detail| detail.item.price * detail.amount }
   end
 end
